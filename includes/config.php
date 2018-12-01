@@ -4,12 +4,16 @@ session_start();
 
 //database credentials
 define('DBHOST','localhost');
-define('DBUSER','1123263');
-define('DBPASS','Dima61949');
-define('DBNAME','1123263');
+define('DBUSER','root');
+define('DBPASS','');
+define('DBNAME','simple_blog');
 
-$db = new PDO("mysql:host=".DBHOST.";port=8889;dbname=".DBNAME, DBUSER, DBPASS);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try {
+	$db = new PDO("mysql:host=".DBHOST.";port=3306;dbname=".DBNAME, DBUSER, DBPASS);
+	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+	echo $e->getMessage();
+}
 
 
 //set timezone
@@ -40,5 +44,5 @@ spl_autoload_register(function ($class) {
 	 
 });
 
-$user = new User($db); 
+$usero = new User($db); 
 ?>

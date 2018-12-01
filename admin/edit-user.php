@@ -2,7 +2,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$user->is_logged_in()){ header('Location: login.php'); }
+//if(!$usero->is_logged_in()){ header('Location: login.php'); }
 ?>
 <!doctype html>
 <html lang="en">
@@ -36,6 +36,28 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 				list-style: none;
 				margin-right: 20px;
 			}
+			form input[type=password],
+			form input[type=text]{
+				background-color: #eaeaea;
+				margin-bottom: 10px;
+				height: 30px;
+				border: none;
+				width:100%;
+			}
+			form input[type=password]:focus,
+			form input[type=text]:focus {
+				border: 2px solid #ff0000;
+			}
+			.error {
+				padding: 0.75em;
+				margin: 0.75em;
+				border: 1px solid #990000;
+				max-width: 400px;
+				color: #990000;
+				background-color: #FDF0EB;
+				-moz-border-radius: 0.5em;
+				-webkit-border-radius: 0.5em;
+			}
 		</style>
 	</head>
 	<body>
@@ -45,7 +67,7 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 		<script language='JavaScript' type='text/javascript' src='/profile/scripts/header_part3.js'></script>
 		<span>
 			<div id="wrapper">
-				<?php include('menu1.php');?>
+				<?php include('menu.php');?>
 				<p><a href="users.php">User Admin Index</a></p>
 				<h2>Edit User</h2>
 
@@ -79,9 +101,12 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 
 		}
 		
-
 		if($email ==''){
 			$error[] = 'Please enter the email address.';
+		}
+		
+		if ($userDob == '') {
+			$error[] = 'Please enter DOB';
 		}
 
 		if(!isset($error)){
@@ -93,28 +118,28 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 					$hashedpassword = $user->password_hash($password, PASSWORD_BCRYPT);
 
 					//update into database
-					$stmt = $db->prepare('UPDATE blog_members SET username = :username, password = :password, email = :email WHERE memberID = :memberID') ;
+					$stmt = $db->prepare('UPDATE blog_members SET username = :username, password = :password, email = :email, userDob = :userDob WHERE memberID = :memberID') ;
 					$stmt->execute(array(
 						':username' => $username,
 						':password' => $hashedpassword,
 						':email' => $email,
-						':memberID' => $memberID
+						':memberID' => $memberID,
+						':userDob' => $userDob
 					));
 
 
 				} else {
 
 					//update database
-					$stmt = $db->prepare('UPDATE blog_members SET username = :username, email = :email WHERE memberID = :memberID') ;
+					$stmt = $db->prepare('UPDATE blog_members SET username = :username, email = :email, userDob = :userDob WHERE memberID = :memberID') ;
 					$stmt->execute(array(
 						':username' => $username,
 						':email' => $email,
-						':memberID' => $memberID
+						':memberID' => $memberID,
+						':userDob' => $userDob
 					));
-
 				}
 				
-
 				//redirect to index page
 				header('Location: users.php?action=updated');
 				exit;
@@ -122,9 +147,7 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 			} catch(PDOException $e) {
 			    echo $e->getMessage();
 			}
-
 		}
-
 	}
 
 	?>
@@ -140,7 +163,7 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 
 		try {
 
-			$stmt = $db->prepare('SELECT memberID, username, email FROM blog_members WHERE memberID = :memberID') ;
+			$stmt = $db->prepare('SELECT memberID, username, email, userDob FROM blog_members WHERE memberID = :memberID') ;
 			$stmt->execute(array(':memberID' => $_GET['id']));
 			$row = $stmt->fetch(); 
 
@@ -164,6 +187,9 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 			
 					<p><label>Email</label><br />
 					<input type='text' name='email' value='<?php echo $row['email'];?>'></p>
+					
+					<p><label>DOB</label><br />
+					<input type='text' name='userDob' value='<?php echo $row['userDob'];?>'></p>
 			
 					<p><input type='submit' name='submit' class="btn btn-default" value='Update User'></p>
 				</form>

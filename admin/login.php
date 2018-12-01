@@ -4,7 +4,7 @@ require_once('../includes/config.php');
 
 
 //check if already logged in
-if( $user->is_logged_in() ){ header('Location: index.php'); } 
+if( $usero->is_logged_in() ){ header('Location: index.php'); } 
 ?>
 <!doctype html>
 <html lang="en">
@@ -27,6 +27,56 @@ if( $user->is_logged_in() ){ header('Location: index.php'); }
 			var topmenu = 4;
 			var rightmenu = 0;
 		</script>
+		<style>
+			* {box-sizing: border-box;}
+			.error {
+				padding: 0.75em;
+				margin: 0.75em;
+				border: 1px solid #990000;
+				max-width: 400px;
+				color: #990000;
+				background-color: #FDF0EB;
+				-moz-border-radius: 0.5em;
+				-webkit-border-radius: 0.5em;
+			}
+			form input[type=password],
+			form input[type=text]{
+				background-color: #eaeaea;
+				height: 35px;
+				border: 1px solid dodgerblue;
+				width:100%;
+				padding: 10px;
+				margin: 10px;
+				margin-left: 0;
+				border-radius: 0;
+			}
+			form input[type=password]:focus,
+			form input[type=text]:focus {
+				border: 2px solid red;
+			}
+			/* Style the input container */
+			.input-container {
+				display: flex;
+				width: 100%;
+				margin-bottom: 15px;
+			}
+			
+			/* Style the form icons */
+			.icon {
+				padding: 10px;
+				background: dodgerblue;
+				color: white;
+				min-width: 50px;
+				width: 30px;
+				text-align: center;
+				height: 35px;
+				margin: 10px;
+				margin-right: 0;
+			}
+			.leftmargin {
+				margin-left: 50px;
+			}
+		</style>
 	</head>
 	<body>
 		<script language='JavaScript' type='text/javascript' src='/profile/scripts/header_part1.js'></script>
@@ -45,10 +95,12 @@ if( $user->is_logged_in() ){ header('Location: index.php'); }
 					
 					if($user->login($username,$password)){ 
 						//logged in return to index page
+						echo "<script>alert('logedin')</script>";
 						header('Location: index.php');
 						exit;
 					} else {
 						$message = '<p class="error">Wrong username or password</p>';
+						echo "<script>alert('not logedin')</script>";
 					}
 			
 				}//end if submit
@@ -58,19 +110,24 @@ if( $user->is_logged_in() ){ header('Location: index.php'); }
 				<form action="" method="post">
 					<div class="row form-group">
 						<div class="col-md-12">
-							<label for="username">Username or Email</label>
-							<input type="text" class="form-control" name="username" id="username">
+							<div class="input-container">
+								<i class="fa fa-user icon"></i>
+								<input type="text" class="form-control" name="username" id="username" placeholder="Username or Email">
+							</div>
 						</div>
 					</div>
 					<div class="row form-group">
 						<div class="col-md-12">
-							<label for="password">Password</label>
-							<input type="password" class="form-control" name="password" id="password"><br />
+							<div class="input-container">
+								<i class="fa fa-key icon"></i>
+								<input type="password" class="form-control" name="password" id="password" placeholder="Password"><br />
+							</div>
 						</div>
 					</div>
 					<div class="row form-group">
 						<div class="col-md-12">
-							<input type="submit" class="btn btn-primary" name="submit" value="Login">
+							<input type="submit" class="btn btn-primary leftmargin" name="submit" value="Login">
+							<a href="register.php" class="btn btn-primary" style="color:white; ">Register</a>
 						</div>
 					</div>
 				</form>	

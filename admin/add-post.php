@@ -2,7 +2,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$user->is_logged_in()){ header('Location: login.php'); }
+//if(!$usero->is_logged_in()){ header('Location: login.php'); }
 ?>
 <!doctype html>
 <html lang="en">
@@ -48,6 +48,28 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 				list-style: none;
 				margin-right: 20px;
 			}
+			form input[type=password],
+			form input[type=text]{
+				background-color: #eaeaea;
+				margin-bottom: 10px;
+				height: 30px;
+				border: none;
+				width:100%;
+			}
+			form input[type=password]:focus,
+			form input[type=text]:focus {
+				border: 2px solid #ff0000;
+			}
+			.error {
+				padding: 0.75em;
+				margin: 0.75em;
+				border: 1px solid #990000;
+				max-width: 400px;
+				color: #990000;
+				background-color: #FDF0EB;
+				-moz-border-radius: 0.5em;
+				-webkit-border-radius: 0.5em;
+			}
 		</style>
 	</head>
 	<body>
@@ -57,8 +79,8 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 		<script language='JavaScript' type='text/javascript' src='/profile/scripts/header_part3.js'></script>
 		<span>
 			<div id="wrapper">
-				<?php include 'menu1.php'; ?>
-				<p><a href="./">Blog Admin Index</a></p>
+				<?php include 'menu.php'; ?>
+				<p><a href="./">Blog Admin Page</a></p>
 				<h2>Add Post</h2>
 
 	<?php
@@ -84,17 +106,23 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 			$error[] = 'Please enter the content.';
 		}
 
+		$postOwner = $_SESSION['username'];
+		if ($postOwner == '') {
+			$error[] = 'username is empty';
+		}
+		
 		if(!isset($error)){
 
 			try {
 
 				//insert into database
-				$stmt = $db->prepare('INSERT INTO blog_posts (postTitle,postDesc,postCont,postDate) VALUES (:postTitle, :postDesc, :postCont, :postDate)') ;
+				$stmt = $db->prepare('INSERT INTO blog_posts (postTitle,postDesc,postCont,postDate,postOwner) VALUES (:postTitle, :postDesc, :postCont, :postDate, :postOwner)') ;
 				$stmt->execute(array(
 					':postTitle' => $postTitle,
 					':postDesc' => $postDesc,
 					':postCont' => $postCont,
-					':postDate' => date('Y-m-d H:i:s')
+					':postDate' => date('Y-m-d H:i:s'),
+					':postOwner' => $postOwner
 				));
 
 				//redirect to index page

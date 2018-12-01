@@ -3,13 +3,13 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$user->is_logged_in()){ header('Location: login.php'); }
+//if(!$usero->is_logged_in()){ header('Location: login.php'); }
 
 //show message from add / edit page
 if(isset($_GET['deluser'])){ 
 
 	//if user id is 1 ignore
-	if($_GET['deluser'] !='1'){
+	if($_GET['deluser'] !='1' && $_GET['deluser'] != '2'){
 
 		$stmt = $db->prepare('DELETE FROM blog_members WHERE memberID = :memberID') ;
 		$stmt->execute(array(':memberID' => $_GET['deluser']));
@@ -67,6 +67,16 @@ if(isset($_GET['deluser'])){
 				list-style: none;
 				margin-right: 20px;
 			}
+			.error {
+				padding: 0.75em;
+				margin: 0.75em;
+				border: 1px solid #990000;
+				max-width: 400px;
+				color: #990000;
+				background-color: #FDF0EB;
+				-moz-border-radius: 0.5em;
+				-webkit-border-radius: 0.5em;
+			}
 		</style>
 	</head>
 	<body>
@@ -76,7 +86,7 @@ if(isset($_GET['deluser'])){
 		<script language='JavaScript' type='text/javascript' src='/profile/scripts/header_part3.js'></script>
 		<span>
 			<div id="wrapper">
-				<?php include('menu1.php');?>
+				<?php include('menu.php');?>
 
 				<?php 
 				//show message from add / edit page
@@ -89,20 +99,22 @@ if(isset($_GET['deluser'])){
 					<tr>
 						<th>Username</th>
 						<th>Email</th>
+						<th>DOB</th>
 						<th>Action</th>
 					</tr>
 				<?php
 					try {
-						$stmt = $db->query('SELECT memberID, username, email FROM blog_members ORDER BY username');
+						$stmt = $db->query('SELECT memberID, username, email, userDob FROM blog_members ORDER BY username');
 						while($row = $stmt->fetch())
 						{
 							echo '<tr>';
 							echo '<td>'.$row['username'].'</td>';
 							echo '<td>'.$row['email'].'</td>';
+							echo '<td>'.$row['userDob'].'</td>';
 				?>
 							<td>
 								<a href="edit-user.php?id=<?php echo $row['memberID'];?>">Edit</a> 
-								<?php if($row['memberID'] != 1){?>
+								<?php if($row['memberID'] != 1 && $row['memberID'] != 2){?>
 									| <a href="javascript:deluser('<?php echo $row['memberID'];?>','<?php echo $row['username'];?>')">Delete</a>
 								<?php } ?>
 							</td>

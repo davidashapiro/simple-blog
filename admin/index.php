@@ -3,15 +3,22 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$user->is_logged_in()){ header('Location: login.php'); }
+//if(!$usero->is_logged_in()){ header('Location: login.php'); }
 
 //show message from add / edit page
-if(isset($_GET['delpost'])){ 
+if(isset($_GET['delpost']))
+{ 
+	$stmt = $db->query('SELECT postID, postTitle, postDate, postOwner FROM blog_posts WHERE postID = ' .$_GET['delpost'].' ORDER BY postID DESC');
+	$row = $stmt->fetch();
+	
+	if ($row['postOwner'] == $_SESSION['username']) {
+		$stmt = $db->prepare('DELETE FROM blog_posts WHERE postID = :postID') ;
+		$stmt->execute(array(':postID' => $_GET['delpost']));
 
-	$stmt = $db->prepare('DELETE FROM blog_posts WHERE postID = :postID') ;
-	$stmt->execute(array(':postID' => $_GET['delpost']));
-
-	header('Location: index.php?action=deleted');
+		header('Location: index.php?action=deleted');
+		exit;
+	}
+	header('Location: index.php?action=error');
 	exit;
 } 
 
@@ -46,8 +53,22 @@ if(isset($_GET['delpost'])){
 		</script>
 		<?php $menupage = 1; ?>
 		<style>
-			table#blogtable {width:100%; text-align:left; border:1px solid #DDDDDD; font-size:12px; color:#000;background:#fff; margin-bottom:10px;}
-			table#blogtable th {background-color:#E5E5E5; border:1px solid #BBBBBB; padding:3px 6px; font-weight:normal; color:#000;}
+			table#blogtable {
+				width:100%; 
+				text-align:left; 
+				border:1px solid #DDDDDD; 
+				font-size:12px; 
+				color:#000;
+				background:#fff; 
+				margin-bottom:10px;
+			}
+			table#blogtable th {
+				background-color:#E5E5E5; 
+				border:1px solid #BBBBBB; 
+				padding:3px 6px; 
+				font-weight:normal; 
+				color:#000;
+			}
 			table#blogtable tr td {border:1px solid #DDDDDD; padding:5px 6px;}
 			table#blogtable tr.alt td {background-color:#E2E2E2;}
 			table#blogtable tr:hover {background-color:#F0F0F0; color:#000;}
@@ -61,6 +82,16 @@ if(isset($_GET['delpost'])){
 				list-style: none;
 				margin-right: 20px;
 			}
+			.error {
+				padding: 0.75em;
+				margin: 0.75em;
+				border: 1px solid #990000;
+				max-width: 400px;
+				color: #990000;
+				background-color: #FDF0EB;
+				-moz-border-radius: 0.5em;
+				-webkit-border-radius: 0.5em;
+			}
 		</style>
 	</head>
 	<body>
@@ -71,7 +102,7 @@ if(isset($_GET['delpost'])){
 		<span>
 			<div id="wrapper">
 		
-				<?php include('menu1.php');?>
+				<?php include('menu.php');?>
 		
 				<?php 
 				//show message from add / edit page
@@ -84,17 +115,19 @@ if(isset($_GET['delpost'])){
 					<tr>
 						<th>Title</th>
 						<th>Date</th>
+						<th>Owner</th>
 						<th>Action</th>
 					</tr>
 				<?php
 					try {
 			
-						$stmt = $db->query('SELECT postID, postTitle, postDate FROM blog_posts ORDER BY postID DESC');
+						$stmt = $db->query('SELECT postID, postTitle, postDate, postOwner FROM blog_posts ORDER BY postID DESC');
 						while($row = $stmt->fetch())
 						{
 							echo '<tr>';
 							echo '<td>'.$row['postTitle'].'</td>';
 							echo '<td>'.date('jS M Y', strtotime($row['postDate'])).'</td>';
+							echo '<td>'.$row['postOwner'].'</td>';
 				?>
 							<td>
 								<a href="edit-post.php?id=<?php echo $row['postID'];?>">Edit</a> | 

@@ -2,7 +2,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$user->is_logged_in()){ header('Location: login.php'); }
+//if(!$usero->is_logged_in()){ header('Location: login.php'); }
 ?>
 <!doctype html>
 <html lang="en">
@@ -48,6 +48,28 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 				list-style: none;
 				margin-right: 20px;
 			}
+			form input[type=password],
+			form input[type=text]{
+				background-color: #eaeaea;
+				margin-bottom: 10px;
+				height: 30px;
+				border: none;
+				width:100%;
+			}
+			form input[type=password]:focus,
+			form input[type=text]:focus {
+				border: 2px solid #ff0000;
+			}
+			.error {
+				padding: 0.75em;
+				margin: 0.75em;
+				border: 1px solid #990000;
+				max-width: 400px;
+				color: #990000;
+				background-color: #FDF0EB;
+				-moz-border-radius: 0.5em;
+				-webkit-border-radius: 0.5em;
+			}
 		</style>
 	</head>
 	<body>
@@ -57,7 +79,7 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 		<script language='JavaScript' type='text/javascript' src='/profile/scripts/header_part3.js'></script>
 		<span>
 			<div id="wrapper">
-				<?php include('menu1.php');?>
+				<?php include('menu.php');?>
 				<p><a href="./">Blog Admin Index</a></p>
 				<h2>Edit Post</h2>
 
@@ -71,44 +93,52 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 		//collect form data
 		extract($_POST);
 
-		//very basic validation
-		if($postID ==''){
-			$error[] = 'This post is missing a valid id!.';
-		}
-
-		if($postTitle ==''){
-			$error[] = 'Please enter the title.';
-		}
-
-		if($postDesc ==''){
-			$error[] = 'Please enter the description.';
-		}
-
-		if($postCont ==''){
-			$error[] = 'Please enter the content.';
-		}
-
-		if(!isset($error)){
-
-			try {
-
-				//insert into database
-				$stmt = $db->prepare('UPDATE blog_posts SET postTitle = :postTitle, postDesc = :postDesc, postCont = :postCont WHERE postID = :postID') ;
-				$stmt->execute(array(
-					':postTitle' => $postTitle,
-					':postDesc' => $postDesc,
-					':postCont' => $postCont,
-					':postID' => $postID
-				));
-
-				//redirect to index page
-				header('Location: index.php?action=updated');
-				exit;
-
-			} catch(PDOException $e) {
-			    echo $e->getMessage();
+		if ($postOwner == $_SESSION['username']) {
+			//very basic validation
+			if($postID ==''){
+				$error[] = 'This post is missing a valid id!.';
 			}
-
+	
+			if($postTitle ==''){
+				$error[] = 'Please enter the title.';
+			}
+	
+			if($postDesc ==''){
+				$error[] = 'Please enter the description.';
+			}
+	
+			if($postCont ==''){
+				$error[] = 'Please enter the content.';
+			}
+			
+			/*if ($postOwner != $_SESSION['username']) {
+				header('Location: index.php?action=error');
+				exit();
+			}*/
+			
+			if(!isset($error)){
+	
+				try {
+	
+					//insert into database
+					$stmt = $db->prepare('UPDATE blog_posts SET postTitle = :postTitle, postDesc = :postDesc, postCont = :postCont, postOwner = :postOwner WHERE postID = :postID') ;
+					$stmt->execute(array(
+						':postTitle' => $postTitle,
+						':postDesc' => $postDesc,
+						':postCont' => $postCont,
+						':postOwner' => $postOwner,
+						':postID' => $postID
+					));
+	
+					//redirect to index page
+					header('Location: index.php?action=updated');
+					exit;
+	
+				} catch(PDOException $e) {
+				    echo $e->getMessage();
+				}
+			}
+			header('Location: index.php?acrion=error');
 		}
 
 	}
@@ -122,11 +152,11 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 		foreach($error as $error){
 			echo $error.'<br />';
 		}
-	}y
+	}
 
 		try {
 
-			$stmt = $db->prepare('SELECT postID, postTitle, postDesc, postCont FROM blog_posts WHERE postID = :postID') ;
+			$stmt = $db->prepare('SELECT postID, postTitle, postDesc, postCont, postOwner FROM blog_posts WHERE postID = :postID') ;
 			$stmt->execute(array(':postID' => $_GET['id']));
 			$row = $stmt->fetch(); 
 
@@ -138,6 +168,7 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 
 				<form action='' method='post'>
 					<input type='hidden' name='postID' value='<?php echo $row['postID'];?>'>
+					<input type="hidden" name="postOwner" value="<?php echo $row['postOwner'];?>" />
 			
 					<p><label>Title</label><br />
 					<input type='text' name='postTitle' value='<?php echo $row['postTitle'];?>'></p>

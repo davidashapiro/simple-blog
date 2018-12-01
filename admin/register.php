@@ -67,9 +67,7 @@ require_once('../includes/config.php');
 		<script language='JavaScript' type='text/javascript' src='/profile/scripts/header_part3.js'></script>
 		<span>
 			<div id="wrapper">
-				<?php include('menu.php');?>
-				<p><a href="users.php">User Admin Index</a></p>
-				<h2>Add User</h2>
+				<h2>Register User</h2>
 
 	<?php
 
@@ -101,7 +99,7 @@ require_once('../includes/config.php');
 		}
 		
 		if ($userDob == '') {
-			$error[] = 'Please enter DOB of the user';
+			$error[] = 'please enter the DOB fo the user';
 		}
 
 		if(!isset($error)){
@@ -152,7 +150,11 @@ require_once('../includes/config.php');
 					<p><label>Email</label><br />
 					<input type='text' name='email' value='<?php if(isset($error)){ echo $_POST['email'];}?>'></p>
 					
-					<p><input type='submit' name='submit' class="btn btn-default" value='Add User'></p>
+					<p><label>Date of birth</label><br />
+					<input type='text' name='userDob' value='<?php if(isset($error)){ echo $_POST['userDob'];}?>'></p>
+					
+					<p><input type='submit' name='submit' class="btn btn-primary" style="color:white;" value='Register'>
+					<a href="login.php" class="btn btn-primary" style="color:white;">Cancel</a></p>
 				</form>
 			</div>
 		</span>
