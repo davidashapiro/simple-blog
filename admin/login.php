@@ -93,7 +93,7 @@ if( $usero->is_logged_in() ){ header('Location: index.php'); }
 					$username = trim($_POST['username']);
 					$password = trim($_POST['password']);
 					
-					if($user->login($username,$password)){ 
+					if($usero->login($username,$password)){ 
 						//logged in return to index page
 						echo "<script>alert('logedin')</script>";
 						header('Location: index.php');

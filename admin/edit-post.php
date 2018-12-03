@@ -2,7 +2,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-//if(!$usero->is_logged_in()){ header('Location: login.php'); }
+if(!$usero->is_logged_in()){ header('Location: login.php'); }
 ?>
 <!doctype html>
 <html lang="en">
@@ -138,7 +138,7 @@ require_once('../includes/config.php');
 				    echo $e->getMessage();
 				}
 			}
-			header('Location: index.php?acrion=error');
+			header('Location: index.php?acrion='.urlencode('There are errors and record can not be updated'));
 		}
 
 	}

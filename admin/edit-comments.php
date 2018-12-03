@@ -3,12 +3,35 @@ require_once('../includes/config.php');
 
 //if not logged in redirect to login page
 if(!$usero->is_logged_in()){ header('Location: login.php'); }
+
+$row = NULL;
+$username = null;
+
+try {
+
+	$stmt = $db->prepare('SELECT commentID,commentOwner,commentDate,commentTitle,commentCont, ownerID,parentID  FROM blog_comments WHERE commentID = :commentID') ;
+	$stmt->execute(array(':commentID' => $_GET['id']));
+	$row = $stmt->fetch(); 
+	
+	$stmt = $db->prepare('SELECT username FROM blog_members WHERE memberID = :memberID');
+	$stmt->execute(array(':memberID' => $row['ownerID']));
+	$username = $stmt->fetch();
+	
+	if ($username['username'] != $_SESSION['username']) 
+	{
+		header('Location: comments.php?action='.urlencode('User is not an owner of this comment and can not edit it'));
+		exit;
+	}
+
+} catch(PDOException $e) {
+    echo $e->getMessage();
+}
 ?>
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Admin - Edit Post</title>
+		<title>Admin - Edit Comment</title>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.2/dist/jquery.fancybox.min.css" />
@@ -80,7 +103,7 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 		<span>
 			<div id="wrapper">
 				<?php include('menu.php');?>
-				<p><a href="./">Blog Admin Index</a></p>
+				<p><a href="./comments.php">Blog Admin Index</a></p>
 				<h2>Edit Post</h2>
 
 	<?php
@@ -92,10 +115,10 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 
 		//collect form data
 		extract($_POST);
-
-		if ($postOwner == $_SESSION['username']) 
+		
+		if ($username['username'] == $_SESSION['username']) 
 		{
-			if($postCont ==''){
+			if($commentCont ==''){
 				$error[] = 'Please enter the content.';
 			}
 			
@@ -130,20 +153,9 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 	//check for any errors
 	if(isset($error)){
 		foreach($error as $error){
-			echo $error.'<br />';
+			echo '<p class"error">'.$error.'</p><br />';
 		}
 	}
-
-		try {
-
-			$stmt = $db->prepare('SELECT commentID,commentOwner,commentDate,commentTitle,commentCont, ownerID,parentID  FROM blog_posts WHERE commentID = :commentID') ;
-			$stmt->execute(array(':commentID' => $_GET['id']));
-			$row = $stmt->fetch(); 
-
-		} catch(PDOException $e) {
-		    echo $e->getMessage();
-		}
-
 	?>
 
 				<form action='' method='post'>

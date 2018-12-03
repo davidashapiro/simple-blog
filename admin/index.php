@@ -3,7 +3,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-//if(!$usero->is_logged_in()){ header('Location: login.php'); }
+if(!$usero->is_logged_in()){ header('Location: login.php'); }
 
 //show message from add / edit page
 if(isset($_GET['delpost']))
@@ -18,7 +18,7 @@ if(isset($_GET['delpost']))
 		header('Location: index.php?action=deleted');
 		exit;
 	}
-	header('Location: index.php?action=error');
+	header('Location: index.php?action='.urlencode('Only the owner can delete tjis post.'));
 	exit;
 } 
 
@@ -107,7 +107,7 @@ if(isset($_GET['delpost']))
 				<?php 
 				//show message from add / edit page
 				if(isset($_GET['action'])){ 
-					echo '<h3>Post '.$_GET['action'].'.</h3>'; 
+					echo '<h3>Post: '.urldecode($_GET['action']).'.</h3>'; 
 				} 
 				?>
 		
@@ -130,8 +130,10 @@ if(isset($_GET['delpost']))
 							echo '<td>'.$row['postOwner'].'</td>';
 				?>
 							<td>
-								<a href="edit-post.php?id=<?php echo $row['postID'];?>">Edit</a> | 
-								<a href="javascript:delpost('<?php echo $row['postID'];?>','<?php echo $row['postTitle'];?>')">Delete</a>
+								<?php if($row['postOwner'] == $_SESSION['username']){?>
+									<a href="edit-post.php?id=<?php echo $row['postID'];?>">Edit</a> | 
+									<a href="javascript:delpost('<?php echo $row['postID'];?>','<?php echo $row['postTitle'];?>')">Delete</a>
+								<?php } ?>
 							</td>
 				<?php 
 							echo '</tr>';

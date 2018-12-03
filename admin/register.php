@@ -104,7 +104,7 @@ require_once('../includes/config.php');
 
 		if(!isset($error)){
 
-			$hashedpassword = $user->password_hash($password, PASSWORD_BCRYPT);
+			$hashedpassword = $usero->password_hash($password, PASSWORD_BCRYPT);
 
 			try {
 

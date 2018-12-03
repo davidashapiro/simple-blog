@@ -102,15 +102,25 @@
 
 <div id='cssmenu'>
 	<ul>
-		<?php if ($menupage == 1) { ?>
+		<?php switch ($menupage) {
+				case 1: ?>
 			<li class='active'><a href='index.php'>Posts</a></li>
 			<li><a href='users.php'>Users</a></li>
+			<li><a href='comments.php'>Comments</a></li>
 			<li><a href='../'>Website</a></li>
 			<li><a href='logout.php'>Logout</a></li>
-		<?php }; ?>
-		<?php if ($menupage == 2) { ?>
+		<?php break; ?>
+		<?php case 2: ?>
 			<li><a href='index.php'>Posts</a></li>
 			<li class='active'><a href='users.php'>Users</a></li>
+			<li><a href='comments.php'>Comments</a></li>
+			<li><a href='../'>Website</a></li>
+			<li><a href='logout.php'>Logout</a></li>
+		<?php break; ?>
+		<?php case 3: ?>
+			<li><a href='index.php'>Posts</a></li>
+			<li><a href='users.php'>Users</a></li>
+			<li class='active'><a href='comments.php'>Comments</a></li>
 			<li><a href='../'>Website</a></li>
 			<li><a href='logout.php'>Logout</a></li>
 		<?php }; ?>

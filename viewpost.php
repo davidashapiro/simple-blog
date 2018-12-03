@@ -12,18 +12,17 @@ try {
 		exit;
 	}
 	if ($row['postOwner'] == '') {
-		$postOwner = 'dima';
+		$postOwner = 'Dima';
 	}
 
 	$stmt = $db->prepare('SELECT * FROM blog_comments WHERE postID = :postID');
 	$stmt->execute(array(':postID' => $_GET['id']));
 	$comments = $stmt->fetchAll();
 	
-	if (!isset($_SESSION['username'])) {
-		$membID = 1;
-	}
+	if (!isset($_SESSION['username'])) {  }
+	
 	$stmt = $db->prepare('SELECT * FROM blog_members WHERE username = :username');
-	$stmt->execute(array(':username' => $membID));
+	$stmt->execute(array(':username' => $_SESSION['username']));
 	$user = $stmt->fetch();
 	
 	if (!isset($user)) {
@@ -56,6 +55,7 @@ try {
 			var topmenu = 4;
 			var rightmenu = 0;
 		</script>
+		<script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
 		<script>
           tinymce.init({
               selector: "textarea",
@@ -125,7 +125,7 @@ try {
 
 		//very basic validation
 		if ($comment == '') {
-			$error[] = 'Please enter some contenr';
+			$error[] = 'Please enter some content';
 		}
 		if ($commentOwner == '') {
 			$error[] = 'Name can not be empty';
@@ -147,11 +147,11 @@ try {
 				));
 				$commentID = $db->lastInsertId();
 				
-				$stmt = $db->prepare('INSERT INTO tree_paths (ancestor, descendant) VALUES (:ancestorid, :descendantid)') ;
+				/*$stmt = $db->prepare('INSERT INTO tree_paths (ancestor, descendant) VALUES (:ancestorid, :descendantid)') ;
 				$stmt->execute(array(
 					':ancestorid' => $commentID - 1,
 					':descendantid' => $commentID
-				));
+				));*/
 
 				//redirect to index page
 				header('Location: viewpost.php?id='.$postID);
