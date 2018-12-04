@@ -126,10 +126,10 @@ if(isset($_GET['delpost']))
 						{
 							echo '<tr>';
 							echo '<td>'.$row['postTitle'].'</td>';
-							echo '<td>'.date('jS M Y', strtotime($row['postDate'])).'</td>';
+							echo '<td width=100>'.date('jS M Y', strtotime($row['postDate'])).'</td>';
 							echo '<td>'.$row['postOwner'].'</td>';
 				?>
-							<td>
+							<td width="80">
 								<?php if($row['postOwner'] == $_SESSION['username']){?>
 									<a href="edit-post.php?id=<?php echo $row['postID'];?>">Edit</a> | 
 									<a href="javascript:delpost('<?php echo $row['postID'];?>','<?php echo $row['postTitle'];?>')">Delete</a>

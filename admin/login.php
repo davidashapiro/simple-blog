@@ -76,6 +76,15 @@ if( $usero->is_logged_in() ){ header('Location: index.php'); }
 			.leftmargin {
 				margin-left: 50px;
 			}
+			#login {
+				background: url(/profile/images/logot1.png); 
+				margin-left: 10%;
+				margin-right: 10%;
+				margin-bottom: 10%;
+				margin-top: 20px;
+				padding: 25px;
+				width: 80%;
+			}
 		</style>
 	</head>
 	<body>
@@ -95,12 +104,10 @@ if( $usero->is_logged_in() ){ header('Location: index.php'); }
 					
 					if($usero->login($username,$password)){ 
 						//logged in return to index page
-						echo "<script>alert('logedin')</script>";
 						header('Location: index.php');
 						exit;
 					} else {
 						$message = '<p class="error">Wrong username or password</p>';
-						echo "<script>alert('not logedin')</script>";
 					}
 			
 				}//end if submit
@@ -109,26 +116,20 @@ if( $usero->is_logged_in() ){ header('Location: index.php'); }
 				?>
 				<form action="" method="post">
 					<div class="row form-group">
-						<div class="col-md-12">
-							<div class="input-container">
-								<i class="fa fa-user icon"></i>
-								<input type="text" class="form-control" name="username" id="username" placeholder="Username or Email">
-							</div>
+						<div class="input-container">
+							<i class="fa fa-user icon"></i>
+							<input type="text" class="form-control" name="username" id="username" placeholder="Username or Email">
 						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-md-12">
-							<div class="input-container">
-								<i class="fa fa-key icon"></i>
-								<input type="password" class="form-control" name="password" id="password" placeholder="Password"><br />
-							</div>
+						<div class="input-container">
+							<i class="fa fa-key icon"></i>
+							<input type="password" class="form-control" name="password" id="password" placeholder="Password"><br />
 						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-md-12">
-							<input type="submit" class="btn btn-primary leftmargin" name="submit" value="Login">
-							<a href="register.php" class="btn btn-primary" style="color:white; ">Register</a>
-						</div>
+						<input type="submit" class="btn btn-primary leftmargin" name="submit" value="Login">
+						<a href="register.php" class="btn btn-primary" style="color:white; ">Register</a>
 					</div>
 				</form>	
 			</div>

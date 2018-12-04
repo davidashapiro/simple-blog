@@ -130,7 +130,7 @@ if(isset($_GET['delpost']))
 				<?php
 					try {
 			
-						$stmt = $db->query('SELECT commentID, commentCont, commentDate, ownerID FROM blog_comments ORDER BY commentID DESC');
+						$stmt = $db->query('SELECT commentID, commentCont, commentDate, ownerID FROM blog_comments WHERE ownerID = '.$_SESSION['memberID'].' ORDER BY commentID DESC');
 						
 						while($row = $stmt->fetch())
 						{
@@ -140,10 +140,10 @@ if(isset($_GET['delpost']))
 							
 							echo '<tr>';
 							echo '<td>'.$row['commentCont'].'</td>';
-							echo '<td>'.date('jS M Y', strtotime($row['commentDate'])).'</td>';
+							echo '<td width=100>'.date('jS M Y', strtotime($row['commentDate'])).'</td>';
 							echo '<td>'.$member['username'].'</td>';
 				?>
-							<td>
+							<td width="80">
 								<?php if ($row['ownerID'] == $_SESSION['memberID']) { ?>
 									<a href="edit-comments.php?id=<?php echo $row['commentID'];?>">Edit</a> | 
 									<a href="javascript:delpost('<?php echo $row['commentID'];?>')">Delete</a>
