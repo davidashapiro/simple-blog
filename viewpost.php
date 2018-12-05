@@ -19,7 +19,9 @@ try {
 	$stmt->execute(array(':postID' => $_GET['id']));
 	$comments = $stmt->fetchAll();
 	
-	if (!isset($_SESSION['username'])) {  }
+	if (!isset($_SESSION['username'])) { 
+		$_SESSION['username'] = '';
+	}
 	
 	$stmt = $db->prepare('SELECT * FROM blog_members WHERE username = :username');
 	$stmt->execute(array(':username' => $_SESSION['username']));
@@ -90,7 +92,7 @@ try {
 		
 				<h1>Blog</h1>
 				<hr />
-				<p><a href="./">Blog Index</a></p>
+				<p><a class="bloga" href="./">Blog Index</a></p>
 					
 				<?php	
 					$blogp = 'blogp';
@@ -101,7 +103,7 @@ try {
 					echo '</div>';
 				?>
 				<?php	if (isset($comments)) { ?>
-						<p style='margin-left:50px'>Comments</p>
+						<p style='margin-left:50px'><b>Comments</b></p>
 						<?php foreach ($comments as $comm) { 
 							$commentID = $comm['commentID'];
 						?>

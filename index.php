@@ -48,7 +48,9 @@
 								echo '<p id='.$blogp.'>'.$row['postDesc'].'</p>';				
 								echo '<p id='.$blogp.'><a id='.$bloga.' href="viewpost.php?id='.$row['postID'].'">Read More</a></p>';				
 							echo '</div>';
+		
 						}
+		
 					} catch(PDOException $e) {
 					    echo $e->getMessage();
 					}

@@ -23,8 +23,11 @@ class User extends Password{
 		try {
 
 			$stmt = $this->_db->prepare('SELECT memberID, username, password FROM blog_members WHERE username = :username');
+			//$stmt->execute(array(':username' => $username));
+			//return $stmt->fetch();
+			
+			//$stmt = $this->_db->prepare('select password,id from users where username=:username');
 			$stmt->execute(array(':username' => $username));
-
 			return $stmt->fetch();
 
 		} catch(PDOException $e) {
@@ -36,9 +39,8 @@ class User extends Password{
 	public function login($username,$password){
 
 		$user = $this->get_user_hash($username);
-		echo "<script>alert('before')</script>";
-		if($this->password_verify($password,$user['password']) == 1){
-			echo "<script>alert('logedin')</script>";
+		if($this->password_verify($password,$user['password']) == 1)
+		{
 		    $_SESSION['loggedin'] = true;
 		    $_SESSION['memberID'] = $user['memberID'];
 		    $_SESSION['username'] = $user['username'];
