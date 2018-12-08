@@ -8,18 +8,23 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 //show message from add / edit page
 if(isset($_GET['delpost']))
 { 
-	$stmt = $db->query('SELECT postID, postTitle, postDate, postOwner FROM blog_posts WHERE postID = ' .$_GET['delpost'].' ORDER BY postID DESC');
-	$row = $stmt->fetch();
+	try {
+		$stmt = $db->query('SELECT postID, postTitle, postDate, postOwner FROM blog_posts WHERE postID = ' .$_GET['delpost'].' ORDER BY postID DESC');
+		$row = $stmt->fetch();
+		
+		if ($row['postOwner'] == $_SESSION['username']) {
+			$stmt = $db->prepare('DELETE FROM blog_posts WHERE postID = :postID') ;
+			$stmt->execute(array(':postID' => $_GET['delpost']));
 	
-	if ($row['postOwner'] == $_SESSION['username']) {
-		$stmt = $db->prepare('DELETE FROM blog_posts WHERE postID = :postID') ;
-		$stmt->execute(array(':postID' => $_GET['delpost']));
-
-		header('Location: index.php?action=deleted');
+			header('Location: index.php?action=deleted');
+			exit;
+		}
+		header('Location: index.php?action='.urlencode('Only the owner can delete tjis post.'));
 		exit;
 	}
-	header('Location: index.php?action='.urlencode('Only the owner can delete tjis post.'));
-	exit;
+	catch (PDOException $e) {
+		echo $e->getMessage();
+	}
 } 
 
 ?>
@@ -126,7 +131,7 @@ if(isset($_GET['delpost']))
 						{
 							echo '<tr>';
 							echo '<td>'.$row['postTitle'].'</td>';
-							echo '<td width=100>'.date('jS M Y', strtotime($row['postDate'])).'</td>';
+							echo '<td width=100>'.date('M jS Y', strtotime($row['postDate'])).'</td>';
 							echo '<td>'.$row['postOwner'].'</td>';
 				?>
 							<td width="80">

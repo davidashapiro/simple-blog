@@ -140,7 +140,7 @@ if(isset($_GET['delpost']))
 							
 							echo '<tr>';
 							echo '<td>'.$row['commentCont'].'</td>';
-							echo '<td width=100>'.date('jS M Y', strtotime($row['commentDate'])).'</td>';
+							echo '<td width=100>'.date('M jS Y', strtotime($row['commentDate'])).'</td>';
 							echo '<td>'.$member['username'].'</td>';
 				?>
 							<td width="80">

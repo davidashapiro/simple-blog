@@ -44,13 +44,11 @@
 							
 							echo '<div>';
 								echo '<h1><a id='.$bloga.' href="viewpost.php?id='.$row['postID'].'">'.$row['postTitle'].'</a></h1>';
-								echo '<p id='.$blogp.'>Posted on '.date('jS M Y H:i:s', strtotime($row['postDate'])).'</p>';
+								echo '<p id='.$blogp.'>Posted on '.date('M jS Y H:i:s', strtotime($row['postDate'])).'</p>';
 								echo '<p id='.$blogp.'>'.$row['postDesc'].'</p>';				
 								echo '<p id='.$blogp.'><a id='.$bloga.' href="viewpost.php?id='.$row['postID'].'">Read More</a></p>';				
 							echo '</div>';
-		
 						}
-		
 					} catch(PDOException $e) {
 					    echo $e->getMessage();
 					}

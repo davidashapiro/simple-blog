@@ -98,7 +98,7 @@ try {
 					$blogp = 'blogp';
 					echo '<div>';
 						echo '<h1>'.$row['postTitle'].'</h1>';
-						echo '<p id='.$blogp.'>Posted on '.date('jS M Y', strtotime($row['postDate'])).'</p>';
+						echo '<p id='.$blogp.'>Posted on '.date('M jS Y', strtotime($row['postDate'])).'</p>';
 						echo '<p id='.$blogp.'>'.$row['postCont'].'</p>';				
 					echo '</div>';
 				?>
@@ -144,7 +144,7 @@ try {
 					':parentID' => $commentID == '' ? '1' : $commentID,
 					':commentCont' => $comment,
 					':commentOwner' => $commentOwner,
-					':commentDate' => date('Y-m-d H:i:s'),
+					':commentDate' => date('m-d-Y H:i:s'),
 					':ownerID' => $user['memberID'] == 0 ? 1 : $user['memberID']
 				));
 				$commentID = $db->lastInsertId();
