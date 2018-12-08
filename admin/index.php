@@ -3,7 +3,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$usero->is_logged_in()){ header('Location: login.php'); }
+if(!$usero->is_logged_in()){ header('Location: /simple-forum/login.php?page=blog'); }
 
 //show message from add / edit page
 if(isset($_GET['delpost']))

@@ -23,7 +23,7 @@ try {
 		$_SESSION['username'] = '';
 	}
 	
-	$stmt = $db->prepare('SELECT * FROM blog_members WHERE username = :username');
+	$stmt = $db->prepare('SELECT * FROM users WHERE username = :username');
 	$stmt->execute(array(':username' => $_SESSION['username']));
 	$user = $stmt->fetch();
 	
@@ -106,8 +106,10 @@ try {
 						<p style='margin-left:50px'><b>Comments</b></p>
 						<?php foreach ($comments as $comm) { 
 							$commentID = $comm['commentID'];
+							$date = strtotime($comm['commentDate']);
+							$date = date('m-d-Y H:i:s', $date);
 						?>
-							<div style="color:black"><?php echo $comm['commentOwner'] ?>&nbsp;on&nbsp;<?php echo $comm['commentDate'] ?></div>
+							<div style="color:black"><?php echo $comm['commentOwner'] ?>&nbsp;on&nbsp;<?php echo $date ?></div>
 							<div style='border:1px solid #999;'>
 							<?php echo '<p id='.$blogp.'>'.$comm['commentCont'].'</p>'; ?>
 							</div><br />
@@ -144,10 +146,11 @@ try {
 					':parentID' => $commentID == '' ? '1' : $commentID,
 					':commentCont' => $comment,
 					':commentOwner' => $commentOwner,
-					':commentDate' => date('m-d-Y H:i:s'),
+					':commentDate' => date('Y-m-d H:i:s'),
 					':ownerID' => $user['memberID'] == 0 ? 1 : $user['memberID']
 				));
 				$commentID = $db->lastInsertId();
+				echo date('m-d-Y H:i:s');
 				
 				/*$stmt = $db->prepare('INSERT INTO tree_paths (ancestor, descendant) VALUES (:ancestorid, :descendantid)') ;
 				$stmt->execute(array(
@@ -174,9 +177,8 @@ try {
 		}
 	}
 	?>
-				<?php //if not logged in redirect to login page
-				if(!$usero->is_logged_in()){ 
-				} else { ?>
+			<?php //if not logged in redirect to login page
+			if($usero->is_logged_in()){ ?>
 				<form action='' method='post'>
 					<input type="hidden" name="postID" value="<?php echo $row['postID']; ?>" />
 					<input type="hidden" name="parentID" value="<?php echo $comment['commentID']; ?>" />
@@ -189,7 +191,7 @@ try {
 			
 					<p><input type='submit' name='submit' class="btn btn-default" value='Submit'></p>
 				</form>
-				<?php } ?>
+			<?php } ?>
 		</span>
 		<script language='JavaScript' type='text/javascript' src='/profile/scripts/footer.js'></script>
 	</body>

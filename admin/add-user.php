@@ -2,7 +2,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$usero->is_logged_in()){ header('Location: login.php'); }
+if(!$usero->is_logged_in()){ header('Location: /simple-forum/login.php?page=blog'); }
 ?>
 <!doctype html>
 <html lang="en">
@@ -97,26 +97,39 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 		}
 
 		if($email ==''){
-			$error[] = 'Please enter the email address.';
+			$error[] = 'Please enter email address.';
 		}
-		
-		if ($userDob == '') {
-			$error[] = 'Please enter DOB of the user';
+		if(!preg_match('#^(([a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+\.?)*[a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+)@(([a-z0-9-_]+\.?)*[a-z0-9-_]+)\.[a-z]{2,}$#i',$_POST['email']))
+		{
+			$error[] = 'Please enter valid email';
 		}
 
 		if(!isset($error)){
 
-			$hashedpassword = $user->password_hash($password, PASSWORD_BCRYPT);
+			//$hashedpassword = $user->password_hash($password, PASSWORD_BCRYPT);
+			$hashedpassword = sha1($password);
 
 			try {
+				$stmt = $db->prepare('select id from users where username=:username');
+				$stmt->execute(array(':username' => $username));
+				$dn = $stmt->rowCount();
+				if($dn==0)
+				{
+					$stmt = $db->prepare('select id from users');
+					$stmt->execute();
+					$dn2 = $stmt->rowCount();
+					$id = $dn2+1;
+				}
 
 				//insert into database
-				$stmt = $db->prepare('INSERT INTO blog_members (username,password,email,userDob) VALUES (:username, :password, :email, :userDob)') ;
+				$stmt = $db->prepare('INSERT INTO users (id, username, password, email, avatar, signup_date) VALUES (:id, :username, :password, :email, :avatar, :signup_date)') ;
 				$stmt->execute(array(
+					':id' => $id,
 					':username' => $username,
 					':password' => $hashedpassword,
 					':email' => $email,
-					':userDob' => $userDob
+					':avatar' => $avatar,
+					':signup_date' => time()
 				));
 
 				//redirect to index page
@@ -151,6 +164,9 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 			
 					<p><label>Email</label><br />
 					<input type='text' name='email' value='<?php if(isset($error)){ echo $_POST['email'];}?>'></p>
+					
+					<p><label>Avatar</label><br />
+					<input type='text' name='avatar' value='<?php if(isset($error)){ echo $_POST['avatar'];}?>'></p>
 					
 					<p><input type='submit' name='submit' class="btn btn-default" value='Add User'></p>
 				</form>

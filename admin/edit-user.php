@@ -2,7 +2,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$usero->is_logged_in()){ header('Location: login.php'); }
+if(!$usero->is_logged_in()){ header('Location: /simple-forum/login.php?page=blog'); }
 ?>
 <!doctype html>
 <html lang="en">
@@ -104,10 +104,6 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 		if($email ==''){
 			$error[] = 'Please enter the email address.';
 		}
-		
-		if ($userDob == '') {
-			$error[] = 'Please enter DOB';
-		}
 
 		if(!isset($error)){
 
@@ -115,28 +111,29 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 
 				if(isset($password)){
 
-					$hashedpassword = $user->password_hash($password, PASSWORD_BCRYPT);
+					//$hashedpassword = $user->password_hash($password, PASSWORD_BCRYPT);
+					$hashedpassword = sha1($password);
 
 					//update into database
-					$stmt = $db->prepare('UPDATE blog_members SET username = :username, password = :password, email = :email, userDob = :userDob WHERE memberID = :memberID') ;
+					$stmt = $db->prepare('UPDATE users SET username = :username, password = :password, email = :email, avatar = :avatar WHERE id = :id') ;
 					$stmt->execute(array(
 						':username' => $username,
 						':password' => $hashedpassword,
 						':email' => $email,
-						':memberID' => $memberID,
-						':userDob' => $userDob
+						':id' => $id,
+						':avatar' => $avatar
 					));
 
 
 				} else {
 
 					//update database
-					$stmt = $db->prepare('UPDATE blog_members SET username = :username, email = :email, userDob = :userDob WHERE memberID = :memberID') ;
+					$stmt = $db->prepare('UPDATE blog_members SET username = :username, email = :email, avatar = :avatar WHERE id = :id') ;
 					$stmt->execute(array(
 						':username' => $username,
 						':email' => $email,
-						':memberID' => $memberID,
-						':userDob' => $userDob
+						':id' => $id,
+						':avatar' => $avatar
 					));
 				}
 				
@@ -161,20 +158,20 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 		}
 	}
 
-		try {
+	try {
 
-			$stmt = $db->prepare('SELECT memberID, username, email, userDob FROM blog_members WHERE memberID = :memberID') ;
-			$stmt->execute(array(':memberID' => $_GET['id']));
-			$row = $stmt->fetch(); 
+		$stmt = $db->prepare('SELECT id, username, email, avatar FROM users WHERE id = :id') ;
+		$stmt->execute(array(':id' => $_GET['id']));
+		$row = $stmt->fetch(); 
 
-		} catch(PDOException $e) {
+	} catch(PDOException $e) {
 		    echo $e->getMessage();
-		}
+	}
 
 	?>
 
 				<form action='' method='post'>
-					<input type='hidden' name='memberID' value='<?php echo $row['memberID'];?>'>
+					<input type='hidden' name='id' value='<?php echo $row['id'];?>'>
 			
 					<p><label>Username</label><br />
 					<input type='text' name='username' value='<?php echo $row['username'];?>'></p>
@@ -188,8 +185,8 @@ if(!$usero->is_logged_in()){ header('Location: login.php'); }
 					<p><label>Email</label><br />
 					<input type='text' name='email' value='<?php echo $row['email'];?>'></p>
 					
-					<p><label>DOB</label><br />
-					<input type='text' name='userDob' value='<?php echo $row['userDob'];?>'></p>
+					<p><label>Avatar</label><br />
+					<input type='text' name='avatar' value='<?php echo $row['avatar'];?>'></p>
 			
 					<p><input type='submit' name='submit' class="btn btn-default" value='Update User'></p>
 				</form>

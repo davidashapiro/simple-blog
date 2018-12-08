@@ -3,7 +3,7 @@
 require_once('../includes/config.php');
 
 //if not logged in redirect to login page
-if(!$usero->is_logged_in()){ header('Location: login.php'); }
+if(!$usero->is_logged_in()){ header('Location: /simple-forum/login.php?page=blog'); }
 
 //show message from add / edit page
 if(isset($_GET['delpost']))
@@ -13,11 +13,8 @@ if(isset($_GET['delpost']))
 		$stmt = $db->query('SELECT * FROM blog_comments WHERE commentID = ' .$_GET['delpost'].' ORDER BY postID DESC');
 		$row = $stmt->fetch();
 		
-		if ($row['ownerID'] == $_SESSION['memberID']) {
-			/*$stmt = $db->prepare('UPDATE blog_comments SET parentID = :parentID WHERE :parentID2 = :commentID');
-			$stmt->execute(array(':parentID' => $row['parentID'],
-								':parentID2' => $row['commentID']));*/
-			
+		if ($row['ownerID'] == $_SESSION['memberID']) 
+		{
 			$stmt = $db->prepare('DELETE FROM blog_comments WHERE commentID = :commentID') ;
 			$stmt->execute(array(':commentID' => $_GET['delpost']));
 	
@@ -134,8 +131,8 @@ if(isset($_GET['delpost']))
 						
 						while($row = $stmt->fetch())
 						{
-							$stmt2 = $db->prepare('SELECT username FROM blog_members WHERE memberID = :memberID');
-							$stmt2->execute(array(':memberID' => $row['ownerID']));
+							$stmt2 = $db->prepare('SELECT username FROM users WHERE id = :id');
+							$stmt2->execute(array(':id' => $row['ownerID']));
 							$member = $stmt2->fetch();
 							
 							echo '<tr>';
